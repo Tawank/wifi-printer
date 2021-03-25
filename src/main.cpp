@@ -99,7 +99,7 @@ void html_ticket() {
 
 void html_photo() {
   printer.justify('C');
-  printer.printBitmap(photo_width, photo_height, photo_data);
+  printer.printBitmap(photo_width, photo_height, photo_data, true);
   server.send(200, "text/html", index_html_data); 
 }
 
