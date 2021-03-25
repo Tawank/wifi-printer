@@ -16,11 +16,11 @@ WebServer server(80);
 
 Adafruit_Thermal printer(&Serial2, 4);
 
-void html_index();
-void html_index_print();
-void html_ticket();
-void html_photo();
-void handle_NotFound();
+void urlHandleIndex();
+void urlHandleIndexPrint();
+void urlHandleTicket();
+void urlHandlePhoto();
+void urlHandleNotFound();
 
 void setup() {
   Serial.begin(115200);
@@ -29,19 +29,11 @@ void setup() {
   Serial.println(ssid[0]);
   WiFi.begin(ssid[0], password[0]);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(300);
-    Serial.print(".");
-  }
-  Serial.println("\nWiFi connected.");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  server.on("/", HTTP_GET, html_index);
-  server.on("/", HTTP_POST, html_index_print);
-  server.on("/ticket", html_ticket);
-  server.on("/photo", html_photo);
-  server.onNotFound(handle_NotFound);
+  server.on("/", HTTP_GET, urlHandleIndex);
+  server.on("/", HTTP_POST, urlHandleIndexPrint);
+  server.on("/ticket", urlHandleTicket);
+  server.on("/photo", urlHandlePhoto);
+  server.onNotFound(urlHandleNotFound);
   server.begin();
 
   Serial2.begin(9600);
@@ -66,15 +58,15 @@ const char *index_html_data =
   "<body><h1>OK</h1>"
   "</body></html>";
 
-void html_index() {
+void urlHandleIndex() {
   server.send(200, "text/html", index_html_data); 
 }
 
-void html_index_print() {
+void urlHandleIndexPrint() {
   server.send(200, "text/plain", "OK"); 
 }
 
-void html_ticket() {
+void urlHandleTicket() {
   // /ticket?title=Problem%20jakis%20tam&number=B214&clientCount=512
   printer.setSize('S');
   printer.justify('C');
@@ -97,12 +89,12 @@ void html_ticket() {
   server.send(200, "text/html", index_html_data); 
 }
 
-void html_photo() {
+void urlHandlePhoto() {
   printer.justify('C');
   printer.printBitmap(photo_width, photo_height, photo_data, true);
   server.send(200, "text/html", index_html_data); 
 }
 
-void handle_NotFound() {
+void urlHandleNotFound() {
   server.send(404, "text/plain", "Not found");
 }
