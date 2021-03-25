@@ -23,7 +23,7 @@ void html_photo();
 void handle_NotFound();
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   Serial.print("Connecting to ");
   Serial.println(ssid[0]);
