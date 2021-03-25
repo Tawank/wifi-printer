@@ -7,10 +7,12 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
+// We have that in include/config.h which is gitignored
 // const char* ssid[] = { "SSID" };
 // const char* password[] = { "password" };
-// We have that in config.h
 #include "config.h"
+
+#define BOARD_LED 2
 
 WebServer server(80);
 
@@ -22,12 +24,19 @@ void urlHandleTicket();
 void urlHandlePhoto();
 void urlHandleNotFound();
 
+void WiFiStationConnect();
+void WiFiStationGotIP(WiFiEvent_t, WiFiEventInfo_t);
+void WiFiStationLostIP(WiFiEvent_t, WiFiEventInfo_t);
+void WiFiStationDisconnected(WiFiEvent_t, WiFiEventInfo_t);
+
 void setup() {
   Serial.begin(115200);
 
-  Serial.print("Connecting to ");
-  Serial.println(ssid[0]);
-  WiFi.begin(ssid[0], password[0]);
+  WiFi.setAutoReconnect(false);
+  WiFi.onEvent(WiFiStationGotIP, SYSTEM_EVENT_STA_GOT_IP);
+  WiFi.onEvent(WiFiStationLostIP, SYSTEM_EVENT_STA_LOST_IP);
+  WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_STA_DISCONNECTED);
+  WiFiStationConnect();
 
   server.on("/", HTTP_GET, urlHandleIndex);
   server.on("/", HTTP_POST, urlHandleIndexPrint);
@@ -40,7 +49,8 @@ void setup() {
   printer.setDefault();
   printer.begin();
   printer.justify('C');
-  // printer.println(WiFi.localIP());
+
+  pinMode(BOARD_LED, OUTPUT);
 }
 
 void loop() {
@@ -97,4 +107,34 @@ void urlHandlePhoto() {
 
 void urlHandleNotFound() {
   server.send(404, "text/plain", "Not found");
+}
+
+uint8_t currentWiFi = 0;
+
+void WiFiStationConnect() {
+  Serial.print(F("Connecting to "));
+  Serial.println(ssid[currentWiFi]);
+  WiFi.begin(ssid[currentWiFi], password[currentWiFi]);
+}
+
+void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
+  Serial.print(F("IP address: "));
+  Serial.println(WiFi.localIP());
+  digitalWrite(BOARD_LED, HIGH);
+}
+
+void WiFiStationLostIP(WiFiEvent_t event, WiFiEventInfo_t info) {
+  Serial.print(F("IP lost"));
+  digitalWrite(BOARD_LED, LOW);
+}
+
+void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
+  Serial.print(F("WiFi lost connection. Reason: "));
+  Serial.println(info.disconnected.reason);
+  if (info.disconnected.reason == WIFI_REASON_NO_AP_FOUND) {
+    currentWiFi = (currentWiFi + 1) % maxWiFiCount;
+  }
+  WiFi.disconnect();
+  WiFiStationConnect();
+  digitalWrite(BOARD_LED, LOW);
 }
