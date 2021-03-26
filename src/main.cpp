@@ -1,15 +1,15 @@
 #include <Arduino.h>
-#include "Adafruit_Thermal.h"
-
-#include "photo.h"
-#include "tutore.h"
-
 #include <WiFi.h>
 #include <WebServer.h>
+#include <Adafruit_Thermal.h>
+
+#include "photo2.h"
+#include "tutore.h"
 
 // We have that in include/config.h which is gitignored
-// const char* ssid[] = { "SSID" };
-// const char* password[] = { "password" };
+// const uint8_t maxWiFiCount = 2;
+// const char* ssid[] = { "SSID", "SSID2" };
+// const char* password[] = { "password", "password2" };
 #include "config.h"
 
 #define BOARD_LED 2
