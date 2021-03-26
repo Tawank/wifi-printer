@@ -31,6 +31,7 @@ void WiFiStationDisconnected(WiFiEvent_t, WiFiEventInfo_t);
 
 void setup() {
   Serial.begin(115200);
+  Serial2.begin(9600);
 
   WiFi.setAutoReconnect(false);
   WiFi.onEvent(WiFiStationGotIP, SYSTEM_EVENT_STA_GOT_IP);
@@ -45,10 +46,8 @@ void setup() {
   server.onNotFound(urlHandleNotFound);
   server.begin();
 
-  Serial2.begin(9600);
   printer.setDefault();
-  printer.begin();
-  printer.justify('C');
+  printer.begin(200);
 
   pinMode(BOARD_LED, OUTPUT);
 }
@@ -77,25 +76,25 @@ void urlHandleIndexPrint() {
 }
 
 void urlHandleTicket() {
-  // /ticket?title=Problem%20jakis%20tam&number=B214&clientCount=512
   printer.setSize('S');
   printer.justify('C');
   printer.printBitmap(tutore_width, tutore_height, tutore_data);
-  printer.println(F(""));
+  printer.feed();
   printer.println(server.arg("title"));
   printer.boldOn();
   printer.setSize('L');
   printer.println(server.arg("number"));
   printer.boldOff();
-  printer.println(F(""));
+  printer.feed();
   printer.setSize('S');
-  printer.println("Petenci przed: " + server.arg("clientCount"));
-  printer.println(F(""));
-  printer.println(F(""));
+  printer.print(F("Petenci przed: "));
+  printer.println(server.arg("clientCount"));
+  printer.feed();
+  printer.feed();
   printer.println(F("Dziekujemy za wizyte!"));
-  printer.println(F(""));
-  printer.println(F(""));
-  printer.println(F(""));
+  printer.feed();
+  printer.feed();
+  printer.feed();
   server.send(200, "text/html", index_html_data); 
 }
 
