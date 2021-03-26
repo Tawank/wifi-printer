@@ -1,7 +1,7 @@
-#include <Arduino.h>
-#include <WiFi.h>
-#include <WebServer.h>
 #include <Adafruit_Thermal.h>
+#include <Arduino.h>
+#include <WebServer.h>
+#include <WiFi.h>
 
 #include "photo2.h"
 #include "tutore.h"
@@ -66,22 +66,22 @@ void loop() {
 }
 
 const char *index_html_data =
-  "<!DOCTYPE html><html>"
-  "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-  "<link rel=\"icon\" href=\"data:,\">"
-  "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}"
-  ".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px;"
-  "text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}"
-  ".button2 {background-color: #555555;}</style></head>"
-  "<body><h1>OK</h1>"
-  "</body></html>";
+    "<!DOCTYPE html><html>"
+    "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+    "<link rel=\"icon\" href=\"data:,\">"
+    "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}"
+    ".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px;"
+    "text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}"
+    ".button2 {background-color: #555555;}</style></head>"
+    "<body><h1>OK</h1>"
+    "</body></html>";
 
 void urlHandleIndex() {
-  server.send(200, "text/html", index_html_data); 
+  server.send(200, "text/html", index_html_data);
 }
 
 void urlHandleIndexPrint() {
-  server.send(200, "text/plain", "OK"); 
+  server.send(200, "text/plain", "OK");
 }
 
 void urlHandleTicket() {
@@ -101,13 +101,13 @@ void urlHandleTicket() {
   printer.feed(2);
   printer.println(F("Dziekujemy za wizyte!"));
   printer.feed(3);
-  server.send(200, "text/html", index_html_data); 
+  server.send(200, "text/html", index_html_data);
 }
 
 void urlHandlePhoto() {
   printer.justify('C');
   printer.printBitmap(photo_width, photo_height, photo_data, true);
-  server.send(200, "text/html", index_html_data); 
+  server.send(200, "text/html", index_html_data);
 }
 
 void urlHandleNotFound() {
