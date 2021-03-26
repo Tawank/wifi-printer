@@ -12,8 +12,8 @@
 // const char* password[] = { "password", "password2" };
 #include "config.h"
 
-#define BOARD_LED 2
-#define PRINT_IP_BUTTON 15
+#define OUTPUT_LED_WIFI_CONNECTED 2
+#define INPUT_BUTTON_PRINT_IP 15
 
 WebServer server(80);
 
@@ -50,14 +50,14 @@ void setup() {
   printer.setDefault();
   printer.begin(200);
 
-  pinMode(BOARD_LED, OUTPUT);
+  pinMode(OUTPUT_LED_WIFI_CONNECTED, OUTPUT);
   pinMode(5, INPUT_PULLUP);
 }
 
 void loop() {
   server.handleClient();
 
-  if (digitalRead(PRINT_IP_BUTTON) == 0) {
+  if (digitalRead(INPUT_BUTTON_PRINT_IP) == 0) {
     printer.justify('C');
     printer.println(WiFi.localIP());
     printer.feed(2);
@@ -125,12 +125,12 @@ void WiFiStationConnect() {
 void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   Serial.print(F("IP address: "));
   Serial.println(WiFi.localIP());
-  digitalWrite(BOARD_LED, HIGH);
+  digitalWrite(OUTPUT_LED_WIFI_CONNECTED, HIGH);
 }
 
 void WiFiStationLostIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   Serial.print(F("IP lost"));
-  digitalWrite(BOARD_LED, LOW);
+  digitalWrite(OUTPUT_LED_WIFI_CONNECTED, LOW);
 }
 
 void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
@@ -141,5 +141,5 @@ void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
   }
   WiFi.disconnect();
   WiFiStationConnect();
-  digitalWrite(BOARD_LED, LOW);
+  digitalWrite(OUTPUT_LED_WIFI_CONNECTED, LOW);
 }
