@@ -60,8 +60,7 @@ void loop() {
   if (digitalRead(PRINT_IP_BUTTON) == 0) {
     printer.justify('C');
     printer.println(WiFi.localIP());
-    printer.feed();
-    printer.feed();
+    printer.feed(2);
     delay(700);
   }
 }
@@ -99,12 +98,9 @@ void urlHandleTicket() {
   printer.setSize('S');
   printer.print(F("Petenci przed: "));
   printer.println(server.arg("clientCount"));
-  printer.feed();
-  printer.feed();
+  printer.feed(2);
   printer.println(F("Dziekujemy za wizyte!"));
-  printer.feed();
-  printer.feed();
-  printer.feed();
+  printer.feed(3);
   server.send(200, "text/html", index_html_data); 
 }
 
