@@ -13,6 +13,7 @@
 #include "config.h"
 
 #define BOARD_LED 2
+#define PRINT_IP_BUTTON 15
 
 WebServer server(80);
 
@@ -50,10 +51,19 @@ void setup() {
   printer.begin(200);
 
   pinMode(BOARD_LED, OUTPUT);
+  pinMode(5, INPUT_PULLUP);
 }
 
 void loop() {
   server.handleClient();
+
+  if (digitalRead(PRINT_IP_BUTTON) == 0) {
+    printer.justify('C');
+    printer.println(WiFi.localIP());
+    printer.feed();
+    printer.feed();
+    delay(700);
+  }
 }
 
 const char *index_html_data =
