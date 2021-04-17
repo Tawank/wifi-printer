@@ -82,6 +82,26 @@ void urlHandleIndex() {
 }
 
 void urlHandleIndexPrint() {
+  for (unsigned int i = 0; i < server.arg("plain").length(); i++) {
+    if (server.arg("plain")[i] == '$') {
+      i++;
+      switch (server.arg("plain")[i]) {
+        case '$':
+          printer.print('$');
+          break;
+        case 'B':
+          printer.boldOn();
+          break;
+        case 'b':
+          printer.boldOff();
+          break;
+      }
+      continue;
+    }
+    printer.print(server.arg("plain")[i]);
+  }
+
+  Serial.println(server.arg("plain"));
   server.send(200, "text/plain", "OK");
 }
 
