@@ -1,0 +1,8 @@
+#ifndef _config_h_
+#define _config_h_
+
+const uint8_t maxWiFiCount = 4;
+const char* ssid[] = { "ssid1", "ssid2", "ssid3", "ssid4" };
+const char* password[] = { "pass1", "pass2", "pass3", "pass4" };
+
+#endif // _config_h_
