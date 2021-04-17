@@ -3,7 +3,7 @@
 #include <WebServer.h>
 #include <WiFi.h>
 
-#include "photo2.h"
+#include "photo.h"
 #include "tutore.h"
 
 // We have that in include/config.h which is gitignored
@@ -51,7 +51,7 @@ void setup() {
   server.begin();
 
   printer.setDefault();
-  printer.begin(200);
+  printer.begin();
 
   pinMode(OUTPUT_LED_WIFI_CONNECTED, OUTPUT);
   pinMode(5, INPUT_PULLUP);
