@@ -21,6 +21,8 @@ Adafruit_Thermal printer(&Serial2, 4);
 
 void urlHandleIndex();
 void urlHandleIndexPrint();
+void urlHandleIndexImagePrint();
+void urlHandleFileUploadPrint();
 void urlHandleTicket();
 void urlHandlePhoto();
 void urlHandleNotFound();
@@ -42,6 +44,7 @@ void setup() {
 
   server.on("/", HTTP_GET, urlHandleIndex);
   server.on("/", HTTP_POST, urlHandleIndexPrint);
+  server.on("/image", HTTP_POST, urlHandleIndexImagePrint, urlHandleFileUploadPrint);
   server.on("/ticket", urlHandleTicket);
   server.on("/photo", urlHandlePhoto);
   server.onNotFound(urlHandleNotFound);
@@ -103,6 +106,37 @@ void urlHandleIndexPrint() {
 
   Serial.println(server.arg("plain"));
   server.send(200, "text/plain", "OK");
+}
+
+void urlHandleIndexImagePrint() {
+  // for (unsigned int i = 0; i < server.arg("plain").length(); i++) {
+  //   if (server.arg("plain")[i] == 1) {
+  //     server.arg("plain").setCharAt(i, 0);
+  //     Serial.println(server.arg("plain")[i], DEC);
+  //   }
+  // }
+
+  // printer.printBitmap(server.arg("width").toInt(), server.arg("height").toInt(), reinterpret_cast<const uint8_t*>(server.arg("plain").c_str()));
+
+  Serial.println(server.uri());
+  server.send(200, "text/plain", "OK");
+}
+
+void urlHandleFileUploadPrint() {
+  Serial.println(server.uri());
+  HTTPUpload& upload = server.upload();
+
+  if (upload.status == UPLOAD_FILE_START) {
+    Serial.print("Upload: START, filename: ");
+    Serial.println(upload.filename);
+  } else if (upload.status == UPLOAD_FILE_WRITE) {
+    printer.printBitmap(server.arg("width").toInt(), server.arg("height").toInt(), upload.buf);
+    Serial.print("Upload: WRITE, Bytes: ");
+    Serial.println(upload.currentSize);
+  } else if (upload.status == UPLOAD_FILE_END) {
+    Serial.print("Upload: END, Size: ");
+    Serial.println(upload.totalSize);
+  }
 }
 
 void urlHandleTicket() {
