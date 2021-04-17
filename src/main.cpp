@@ -61,6 +61,7 @@ void loop() {
     printer.justify('C');
     printer.println(WiFi.localIP());
     printer.feed(2);
+    printer.justify('L');
     delay(700);
   }
 }
