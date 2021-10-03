@@ -1,18 +1,11 @@
-#include <Adafruit_Thermal.h>
 #include <Arduino.h>
+#include <Adafruit_Thermal.h>
 #include <WebServer.h>
-#include <WiFi.h>
 
+#include <wifi_reconnect.h>
 #include "photo.h"
 #include "tutore.h"
 
-// We have that in include/config.h which is gitignored
-// const uint8_t maxWiFiCount = 2;
-// const char* ssid[] = { "SSID", "SSID2" };
-// const char* password[] = { "password", "password2" };
-#include "config.h"
-
-#define OUTPUT_LED_WIFI_CONNECTED 2
 #define INPUT_BUTTON_PRINT_IP 15
 
 WebServer server(80);
@@ -26,11 +19,6 @@ void urlHandleFileUploadPrint();
 void urlHandleTicket();
 void urlHandlePhoto();
 void urlHandleNotFound();
-
-void WiFiStationConnect();
-void WiFiStationGotIP(WiFiEvent_t, WiFiEventInfo_t);
-void WiFiStationLostIP(WiFiEvent_t, WiFiEventInfo_t);
-void WiFiStationDisconnected(WiFiEvent_t, WiFiEventInfo_t);
 
 void setup() {
   Serial.begin(115200);
@@ -167,34 +155,4 @@ void urlHandlePhoto() {
 
 void urlHandleNotFound() {
   server.send(404, "text/plain", "Not found");
-}
-
-uint8_t currentWiFi = 0;
-
-void WiFiStationConnect() {
-  Serial.print(F("Connecting to "));
-  Serial.println(ssid[currentWiFi]);
-  WiFi.begin(ssid[currentWiFi], password[currentWiFi]);
-}
-
-void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
-  Serial.print(F("IP address: "));
-  Serial.println(WiFi.localIP());
-  digitalWrite(OUTPUT_LED_WIFI_CONNECTED, HIGH);
-}
-
-void WiFiStationLostIP(WiFiEvent_t event, WiFiEventInfo_t info) {
-  Serial.print(F("IP lost"));
-  digitalWrite(OUTPUT_LED_WIFI_CONNECTED, LOW);
-}
-
-void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
-  Serial.print(F("WiFi lost connection. Reason: "));
-  Serial.println(info.disconnected.reason);
-  if (info.disconnected.reason == WIFI_REASON_NO_AP_FOUND) {
-    currentWiFi = (currentWiFi + 1) % maxWiFiCount;
-  }
-  WiFi.disconnect();
-  WiFiStationConnect();
-  digitalWrite(OUTPUT_LED_WIFI_CONNECTED, LOW);
 }
