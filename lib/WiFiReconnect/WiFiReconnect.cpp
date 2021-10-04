@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "wifi_reconnect.h"
+#include "WiFiReconnect.h"
 
 // We have that in include/config.h which is gitignored
 // const uint8_t maxWiFiCount = 2;

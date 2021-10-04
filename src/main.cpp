@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Adafruit_Thermal.h>
 
-#include <wifi_reconnect.h>
+#include <WiFiReconnect.h>
 #include "printer_web_server.h"
 
 #define INPUT_BUTTON_PRINT_IP 15
