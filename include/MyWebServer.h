@@ -1,5 +1,5 @@
-#ifndef _printer_web_server_h_
-#define _printer_web_server_h_
+#ifndef _MyWebServer_h_
+#define _MyWebServer_h_
 #include <WebServer.h>
 
 void initServer();
@@ -12,4 +12,4 @@ void urlHandleTicket();
 void urlHandlePhoto();
 void urlHandleNotFound();
 
-#endif // _printer_web_server_h_
+#endif // _MyWebServer_h_

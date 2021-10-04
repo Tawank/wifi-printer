@@ -1,4 +1,4 @@
-#include "printer_web_server.h"
+#include "MyWebServer.h"
 #include <Adafruit_Thermal.h>
 
 #include "photo.h"
