@@ -1,25 +1,39 @@
-#include <Arduino.h>
 #include "WiFiReconnect.h"
+#include <WireGuard-ESP32.h>
 
 // We have that in include/config.h which is gitignored
 // const uint8_t maxWiFiCount = 2;
-// const char* ssid[] = { "SSID", "SSID2" };
-// const char* password[] = { "password", "password2" };
+// const char* WIFI_SSIDS[] = { "SSID", "SSID2" };
+// const char* WIFI_PASSWORDS[] = { "password", "password2" };
 #include "wifi_config.h"
 
+static WireGuard wg;
 
 uint8_t currentWiFi = 0;
 
 void WiFiStationConnect() {
   Serial.print(F("Connecting to "));
-  Serial.println(ssid[currentWiFi]);
-  WiFi.begin(ssid[currentWiFi], password[currentWiFi]);
+  Serial.println(WIFI_SSIDS[currentWiFi]);
+  WiFi.begin(WIFI_SSIDS[currentWiFi], WIFI_PASSWORDS[currentWiFi]);
 }
 
 void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
+  digitalWrite(OUTPUT_LED_WIFI_CONNECTED, HIGH);
   Serial.print(F("IP address: "));
   Serial.println(WiFi.localIP());
-  digitalWrite(OUTPUT_LED_WIFI_CONNECTED, HIGH);
+  configTzTime("CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00", "time.google.com", "time.nist.gov", "pool.ntp.org");
+  while (time(nullptr) < 1000000) {
+    delay(500);
+  }
+  time_t now = time(nullptr);
+  Serial.println(ctime(&now));
+  wg.begin(
+    WG_LOCAL_ADDRESS,
+    WG_CLIENT_PRIVATE_KEY,
+    WG_PEER_ADDRESS,
+    WG_PEER_PUBLIC_KEY,
+    WG_PEER_PORT
+  );
 }
 
 void WiFiStationLostIP(WiFiEvent_t event, WiFiEventInfo_t info) {
