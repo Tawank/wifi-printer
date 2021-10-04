@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Adafruit_Thermal.h>
 
 #include <WiFiReconnect.h>
 #include "MyWebServer.h"

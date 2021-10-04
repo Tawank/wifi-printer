@@ -1,6 +1,7 @@
 #ifndef _MyWebServer_h_
 #define _MyWebServer_h_
 #include <WebServer.h>
+#include <Adafruit_Thermal.h>
 
 void initServer();
 

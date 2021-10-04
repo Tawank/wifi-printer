@@ -1,5 +1,4 @@
 #include "MyWebServer.h"
-#include <Adafruit_Thermal.h>
 
 #include "photo.h"
 #include "tutore.h"
