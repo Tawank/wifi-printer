@@ -1,13 +1,10 @@
 #include "WiFiReconnect.h"
-#include <WireGuard-ESP32.h>
 
 // We have that in include/config.h which is gitignored
 // const uint8_t maxWiFiCount = 2;
 // const char* WIFI_SSIDS[] = { "SSID", "SSID2" };
 // const char* WIFI_PASSWORDS[] = { "password", "password2" };
 #include "wifi_config.h"
-
-static WireGuard wg;
 
 uint8_t currentWiFi = 0;
 
@@ -27,13 +24,6 @@ void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   }
   time_t now = time(nullptr);
   Serial.println(ctime(&now));
-  wg.begin(
-    WG_LOCAL_ADDRESS,
-    WG_CLIENT_PRIVATE_KEY,
-    WG_PEER_ADDRESS,
-    WG_PEER_PUBLIC_KEY,
-    WG_PEER_PORT
-  );
 }
 
 void WiFiStationLostIP(WiFiEvent_t event, WiFiEventInfo_t info) {
