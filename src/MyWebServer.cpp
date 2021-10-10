@@ -1,4 +1,5 @@
 #include "MyWebServer.h"
+#include <Base64.hpp>
 
 #include "photo.h"
 #include "tutore.h"
@@ -6,7 +7,7 @@
 extern Adafruit_Thermal printer;
 extern WebServer server;
 
-const char *index_html_data =
+const char PROGMEM *index_html_data =
     "<!DOCTYPE html><html>"
     "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
     "<link rel=\"icon\" href=\"data:,\">"
@@ -46,34 +47,20 @@ void urlHandleIndexPrint() {
 }
 
 void urlHandleIndexImagePrint() {
-  // for (unsigned int i = 0; i < server.arg("plain").length(); i++) {
-  //   if (server.arg("plain")[i] == 1) {
-  //     server.arg("plain").setCharAt(i, 0);
-  //     Serial.println(server.arg("plain")[i], DEC);
-  //   }
-  // }
-
-  // printer.printBitmap(server.arg("width").toInt(), server.arg("height").toInt(), reinterpret_cast<const uint8_t*>(server.arg("plain").c_str()));
-
-  Serial.println(server.uri());
-  server.send(200, "text/plain", "OK");
-}
-
-void urlHandleFileUploadPrint() {
-  Serial.println(server.uri());
-  HTTPUpload& upload = server.upload();
-
-  if (upload.status == UPLOAD_FILE_START) {
-    Serial.print("Upload: START, filename: ");
-    Serial.println(upload.filename);
-  } else if (upload.status == UPLOAD_FILE_WRITE) {
-    printer.printBitmap(server.arg("width").toInt(), server.arg("height").toInt(), upload.buf);
-    Serial.print("Upload: WRITE, Bytes: ");
-    Serial.println(upload.currentSize);
-  } else if (upload.status == UPLOAD_FILE_END) {
-    Serial.print("Upload: END, Size: ");
-    Serial.println(upload.totalSize);
+  if ((server.arg("width").toInt() + server.arg("height").toInt()) > 1000) {
+    return server.send(400, F("text/plain"), "Image is too big");
   }
+
+  unsigned char* buffer = (unsigned char*) malloc (server.arg("width").toInt() * server.arg("height").toInt() / 8 + 1);
+  if (buffer == NULL) {
+    return server.send(500, F("text/plain"), "Could not allocate buffer");
+  }
+  decode_base64((unsigned char*) server.arg("plain").c_str(), buffer);
+  printer.printBitmap(server.arg("width").toInt(), server.arg("height").toInt(), buffer);
+  printer.feed(2);
+
+  free(buffer);
+  server.send(200, F("text/plain"), "OK");
 }
 
 void urlHandleTicket() {
@@ -93,15 +80,15 @@ void urlHandleTicket() {
   printer.feed(2);
   printer.println(F("Dziekujemy za wizyte!"));
   printer.feed(3);
-  server.send(200, "text/plain", "OK");
+  server.send(200, F("text/plain"), "OK");
 }
 
 void urlHandlePhoto() {
   printer.justify('C');
   printer.printBitmap(photo_width, photo_height, photo_data, true);
-  server.send(200, "text/plain", "OK");
+  server.send(200, F("text/plain"), "OK");
 }
 
 void urlHandleNotFound() {
-  server.send(404, "text/plain", "Not found");
+  server.send(404, F("text/plain"), "Not found");
 }

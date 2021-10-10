@@ -21,7 +21,7 @@ void setup() {
 
   server.on("/", HTTP_GET, urlHandleIndex);
   server.on("/", HTTP_POST, urlHandleIndexPrint);
-  server.on("/image", HTTP_POST, urlHandleIndexImagePrint, urlHandleFileUploadPrint);
+  server.on("/image", HTTP_POST, urlHandleIndexImagePrint);
   server.on("/ticket", urlHandleTicket);
   server.on("/photo", urlHandlePhoto);
   server.onNotFound(urlHandleNotFound);
