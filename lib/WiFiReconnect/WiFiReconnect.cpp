@@ -1,4 +1,5 @@
 #include "WiFiReconnect.h"
+#include <HTTPClient.h>
 
 // We have that in include/config.h which is gitignored
 // const uint8_t maxWiFiCount = 2;
@@ -17,13 +18,30 @@ void WiFiStationConnect() {
 void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   digitalWrite(OUTPUT_LED_WIFI_CONNECTED, HIGH);
   Serial.print(F("IP address: "));
-  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.localIP().toString().c_str());
   configTzTime("CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00", "time.google.com", "time.nist.gov", "pool.ntp.org");
   while (time(nullptr) < 1000000) {
     delay(500);
   }
   time_t now = time(nullptr);
   Serial.println(ctime(&now));
+
+  Serial.println(WiFi.status());
+
+  HTTPClient http;
+  http.begin(DATABASE_URL);
+  http.addHeader("Content-Type", "application/json");
+  char payload[40];
+  snprintf(
+    payload,
+    sizeof(payload),
+    "{\"printerIp\":\"%s\"}",
+    WiFi.localIP().toString().c_str()
+  );
+  Serial.println(payload);
+  http.PUT(payload);
+
+  http.end();
 }
 
 void WiFiStationLostIP(WiFiEvent_t event, WiFiEventInfo_t info) {
