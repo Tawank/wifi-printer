@@ -36,11 +36,42 @@ void urlHandleIndexPrint() {
         case 'b':
           printer.boldOff();
           break;
+        case 'S':
+          printer.setSize('S');
+          break;
+        case 'M':
+          printer.setSize('M');
+          break;
+        case 'L':
+          printer.setSize('L');
+          break;
+        case 'W':
+          printer.doubleWidthOn();
+          break;
+        case 'w':
+          printer.doubleWidthOff();
+          break;
+        case 'H':
+          printer.doubleHeightOn();
+          break;
+        case 'h':
+          printer.doubleHeightOff();
+          break;
+        case 'l':
+          printer.justify('l');
+          break;
+        case 'c':
+          printer.justify('c');
+          break;
+        case 'r':
+          printer.justify('r');
+          break;
       }
       continue;
     }
     printer.print(server.arg("plain")[i]);
   }
+  printer.feed();
 
   Serial.println(server.arg("plain"));
   server.send(200, "text/plain", "OK");
